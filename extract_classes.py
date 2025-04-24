@@ -15,7 +15,10 @@ def extract_class_code_from_xml(xml_dir, source_root):
     print(f"Using source root: {source_root}\n")
 
     found_classes = False
-    kinds_to_extract = {'class', 'struct', 'interface'} # Add others if needed
+    kinds_to_extract = {'class', 'struct', 'interface', 'enum', 'example'} # Add others if needed
+
+    max_tokens = 0
+    num_classes = 0
 
     for root, _, files in os.walk(xml_dir):
         for filename in files:
@@ -58,10 +61,6 @@ def extract_class_code_from_xml(xml_dir, source_root):
                             print(f"Warning: Skipping class '{class_name}' in {filename} - invalid line numbers ('{start_line_str}', '{end_line_str}').", file=sys.stderr)
                             continue
 
-                        if start_line <= 0 or end_line < start_line:
-                             print(f"Warning: Skipping class '{class_name}' in {filename} - invalid line range ({start_line}-{end_line}).", file=sys.stderr)
-                             continue
-
                         # Construct full path to the source file
                         source_abs_path = os.path.abspath(os.path.join(source_root, source_rel_path))
 
@@ -73,6 +72,7 @@ def extract_class_code_from_xml(xml_dir, source_root):
 
                         # Extract code snippet
                         try:
+                            num_classes += 1
                             with open(source_abs_path, 'r', encoding='utf-8', errors='ignore') as f:
                                 lines = f.readlines()
                                 # XML line numbers are 1-based, Python list index is 0-based
@@ -82,6 +82,8 @@ def extract_class_code_from_xml(xml_dir, source_root):
                                 print(code_snippet.strip())
                                 print("-" * 60)
                                 print("\n")
+                                if len(code_snippet.strip()) > max_tokens:
+                                    max_tokens = len(code_snippet.strip())
 
                         except FileNotFoundError:
                             print(f"  Error: Source file not found at {source_abs_path}\n", file=sys.stderr)
@@ -95,7 +97,8 @@ def extract_class_code_from_xml(xml_dir, source_root):
             except Exception as e:
                  print(f"An unexpected error occurred processing {xml_filepath}: {e}", file=sys.stderr)
 
-
+    print(f"Total classes found: {num_classes}")
+    print(f"Maximum tokens in any class: {max_tokens}")
     if not found_classes:
         print("No class definitions found in the XML files.")
 
