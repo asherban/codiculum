@@ -82,8 +82,9 @@ def extract_class_code_from_xml(xml_dir, source_root):
                                 print(code_snippet.strip())
                                 print("-" * 60)
                                 print("\n")
-                                if len(code_snippet.strip()) > max_tokens:
-                                    max_tokens = len(code_snippet.strip())
+                                snippet_len = len(code_snippet.strip())
+                                if snippet_len > max_tokens:
+                                    max_tokens = snippet_len
 
                         except FileNotFoundError:
                             print(f"  Error: Source file not found at {source_abs_path}\n", file=sys.stderr)

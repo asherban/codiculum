@@ -67,3 +67,41 @@ GENERATE_QHP           = NO
 
 # Disable SQLite3 output
 GENERATE_SQLITE3       = YES
+
+# Extract all elements, even if not documented
+EXTRACT_ALL            = YES
+
+# Extract private members
+EXTRACT_PRIVATE        = YES
+
+# Extract static members
+EXTRACT_STATIC         = YES
+
+# Extract local methods
+EXTRACT_LOCAL_METHODS  = YES
+
+# Extract local classes
+EXTRACT_LOCAL_CLASSES  = YES
+
+# Extract anonymous namespaces
+EXTRACT_ANON_NSPACES   = YES
+
+# Document all entities, even if not documented
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+HIDE_UNDOC_NAMESPACES  = NO
+HIDE_UNDOC_RELATIONS   = NO
+
+# Document all special members (constructors, destructors, etc.)
+HIDE_UNDOC_RELATIONS   = NO
+HIDE_SCOPE_NAMES       = NO
+
+# Include all source code in the documentation
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = YES
+
+# Generate XML output for programmatic access
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
+XML_PROGRAMLISTING     = YES
+
