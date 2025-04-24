@@ -1,0 +1,69 @@
+# If the GENERATE_XML tag is set to YES, doxygen will generate an XML file that
+# captures the structure of the code including all documentation.
+# The default value is: NO.
+GENERATE_XML           = YES
+
+# The XML_OUTPUT tag is used to specify where the XML pages will be put. If a
+# relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
+# it.
+# The default directory is: xml.
+XML_OUTPUT             = xml
+
+# If the XML_PROGRAMLISTING tag is set to YES, doxygen will include the program
+# listings (including syntax highlighting and cross-referencing information) to
+# the XML output. Note that enabling this will significantly increase the size
+# of the XML output.
+# The default value is: YES.
+XML_PROGRAMLISTING     = YES
+# Specify the directories to be included in the documentation.
+# This will include the mlir directory for indexing.
+INPUT                  = mlir
+
+# If the RECURSIVE tag is set to YES, doxygen will descend directories recursively
+# to ensure all content in the mlir directory is indexed.
+RECURSIVE              = YES
+
+# Specify file patterns to be included in the documentation.
+# This ensures all relevant files in the mlir directory are indexed.
+FILE_PATTERNS          = *.h *.cpp *.c *.cc *.hpp *.def *.td *.inc *.py
+
+# Specify the output directory for the generated documentation.
+# This will create a separate directory for each module.
+OUTPUT_DIRECTORY       = output
+
+
+# Disable HTML output
+GENERATE_HTML          = NO
+
+# Disable LaTeX output
+GENERATE_LATEX         = NO
+
+# Disable RTF output
+GENERATE_RTF           = NO
+
+# Disable man pages output
+GENERATE_MAN           = NO
+
+# Disable DocBook output
+GENERATE_DOCBOOK       = NO
+
+# Disable AutoGen DEF file output
+GENERATE_AUTOGEN_DEF   = NO
+
+# Disable Perl module output
+GENERATE_PERLMOD       = NO
+
+# Disable CHI output
+GENERATE_CHI           = NO
+
+# Disable QHP output
+GENERATE_QHP           = NO
+
+# Disable Eclipse help output
+GENERATE_ECLIPSEHELP   = NO
+
+# Disable Qt help output
+GENERATE_QHP           = NO
+
+# Disable SQLite3 output
+GENERATE_SQLITE3       = YES
