@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# .cursorrules for Code RAG Generator Project
+# Codiculum is a Code RAG Generator Project
 
 ## LLM Persona
 - **Role:** Act as an expert Python developer with deep knowledge of the specified tech stack (uv, LlamaIndex, ChromaDB, Doxygen, Streamlit, OpenAI APIs) and software engineering best practices.
