@@ -15,7 +15,7 @@
 ## 2. Code Chunker (Refer to `docs/ChunkingStrategy.md`)
 - [x] Create chunker module structure (`src/codiculum/chunker/`) and define `Chunk` model (`src/codiculum/chunker/models.py`).
 - [x] Implement and test source code snippet retrieval based on Doxygen location data. (Visible outcome: Function takes Doxygen location, returns code string; verified via unit test).
-- [ ] Implement and test formatting of a single code element into a `Chunk` object. (Visible outcome: Function takes parsed element data & source, returns `Chunk` object according to strategy; verified via unit test).
+- [x] Implement and test formatting of a single code element into a `Chunk` object. (Visible outcome: Function takes parsed element data & source, returns `Chunk` object according to strategy; verified via unit test).
 - [ ] Implement and test the main chunking orchestrator function (`src/codiculum/chunker/code_chunker.py`). (Visible outcome: Function takes parsed Doxygen data, orchestrates retrieval/formatting, returns list of `Chunk` objects; verified via integration test using sample data).
 - [ ] Implement and test chunk splitting logic for token limits. (Visible outcome: Main chunker function splits large chunks; verified by updating integration test).
 
