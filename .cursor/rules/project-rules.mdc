@@ -16,13 +16,13 @@ This project aims to build a Retrieval-Augmented Generation (RAG) system for cod
 ## AI Behavior Guidelines
 - **Agent Mode Focus:** Operate primarily in agent mode. Before implementing features or fixing bugs, propose a step-by-step plan.
 - **Task Decomposition & Tracking:**
-    - Break down complex tasks into the smallest possible, logical, and manageable steps.
+    - Break down complex tasks into the smallest possible, logical, and manageable steps. Each step should result in a demonstrable outcome.
     - Maintain a `TASKS.md` file in the project root. This file should list the overall plan and track the status of each sub-task (e.g., using checkboxes `[ ]` for pending, `[x]` for done).
     - Before starting work, ensure the proposed step is documented in `TASKS.md`.
     - After successfully completing *each minimal step*, update `TASKS.md` to mark the step as completed.
-    - Do not continue to the next task after updating TASKS.md and commiting the changes. The user will instruct you when to proceed to the next task in a separate prompt
-    - Always ask the user if the task has been finished, or if is some change needed before finishing the task.
-- **Minimal Iterations:** Focus on completing *one minimal step* at a time per interaction cycle (plan -> execute -> update `TASKS.md` -> commit).
+- **Single Task Interaction:** Focus on completing *exactly one minimal step* per interaction cycle (plan -> execute -> demonstrate -> update `TASKS.md`).
+- **Demonstrable Outcome:** Each completed step must result in a workable demo, a tangible output, or clear instructions for the user to verify the change (e.g., run a command, inspect a file). The AI should either run the demo or provide these instructions.
+- **User Approval & Commit:** After demonstrating the outcome and updating `TASKS.md`, **wait for user approval**. Once approved, proceed to the commit step. Do not proceed to the next task.
 - **Context Awareness:** Refer to the specified tech stack and project architecture when generating code or suggestions. Ask clarifying questions *only* if the requirements are technically ambiguous or insufficient to proceed.
 - **Code Explanation:** When generating code, provide clear explanations for the *logic*, especially for non-trivial sections, focusing on the *why* rather than just the *what*.
 
@@ -53,11 +53,18 @@ This project aims to build a Retrieval-Augmented Generation (RAG) system for cod
 - **Dependencies:** Manage via `uv` (`pyproject.toml`, `uv.lock`). Sync environment with `uv sync`.
 
 ## Workflow & Version Control
-- **Task File:** Use `TASKS.md` in the root directory to list and track tasks/sub-tasks.
-- **Atomic Commits:** After completing *each minimal task* and updating `TASKS.md`:
-    1.  Stage relevant changed files (`TASKS.md` included).
-    2.  Generate concise, descriptive commit message summarizing the completed task (e.g., "Feat: Implement basic Doxygen XML parsing function", "Fix: Handle missing description tags", "Chore: Update TASKS.md"). Use conventional commit prefixes.
-    3.  Execute `git commit` with the message.
+- **Task File:** Use `TASKS.md` in the root directory to list and track tasks/sub-tasks. Ensure tasks are granular enough to fit the single-task interaction model and result in a demonstrable outcome.
+- **Interaction Cycle:**
+    1.  Define the minimal task and update `TASKS.md` (`[ ]`).
+    2.  Execute the task.
+    3.  Demonstrate the outcome (run demo or provide instructions/output).
+    4.  Update `TASKS.md` (`[x]`).
+    5.  Ask for user approval to commit.
+    6.  **Wait for user approval.**
+    7.  Upon approval, stage relevant files (`TASKS.md` included).
+    8.  Generate and execute a concise, descriptive `git commit` message using conventional prefixes (e.g., "Feat: ...", "Fix: ...", "Chore: Update TASKS.md").
+    9.  Stop and wait for the next user instruction.
+- **Atomic Commits:** Each commit corresponds to one approved, completed minimal task.
 
 ## Specific Instructions
 - **Doxygen Parsing:** Extract function/method signatures, doc blocks, relationships from XML. Use standard Python XML libs.
@@ -69,38 +76,42 @@ This project aims to build a Retrieval-Augmented Generation (RAG) system for cod
 
 ## Example Task Breakdown Request & Workflow
 User: "Implement the Doxygen XML parser."
-AI: "Understood. Decomposing the Doxygen XML parser implementation into minimal steps and updating `TASKS.md`:
+AI: "Understood. Decomposing the Doxygen XML parser implementation into minimal, demonstrable steps and updating `TASKS.md`:
 
 ```markdown
 # TASKS.md
 ## Doxygen XML Parser
-- [ ] Identify target Doxygen XML files (e.g., specific file XMLs)
-- [ ] Add `lxml` dependency: `uv add lxml`
-- [ ] Define data structure for extracted info (e.g., FunctionInfo dataclass)
-- [ ] Implement function: parse single `<memberdef>` element (function)
-- [ ] Implement main parser: find/process function `<memberdef>`s in one XML
-- [ ] Add basic error handling (file not found, XML parse error)
-- [ ] Add docstrings/type hints for parser components
+- [ ] Step 1: Add `lxml` dependency via `uv add lxml` and verify installation.
+- [ ] Step 2: Define data structure for extracted info (e.g., FunctionInfo dataclass) in `src/parser/data_structures.py`.
+- [ ] Step 3: Implement function: parse single `<memberdef>` element (function) in `src/parser/doxygen_parser.py`.
+# ... rest of tasks broken down similarly ...
 ```
 
-Proceeding with step 1: **Identify target Doxygen XML files**. Assuming we need to parse the XML files corresponding to source files generated by Doxygen. Confirm target directory or specific file pattern if known.
+Proceeding with Step 1: **Add `lxml` dependency via `uv add lxml` and verify installation.**
 
-*(User confirms/provides path)*
+**(AI executes `uv add lxml`)**
+**(AI executes `uv sync` or checks `pyproject.toml` / `uv.lock` to verify)**
 
-AI: "Acknowledged. Target files identified. Completing step 1."
+AI: "Step 1 completed: `lxml` dependency added and verified. Updated `TASKS.md`:"
 
-**(AI updates TASKS.md):**
 ```markdown
 # TASKS.md
 ## Doxygen XML Parser
-- [x] Identify target Doxygen XML files (e.g., specific file XMLs)
-- [ ] Add `lxml` dependency: `uv add lxml`
-# ... rest of tasks
+- [x] Step 1: Add `lxml` dependency via `uv add lxml` and verify installation.
+- [ ] Step 2: Define data structure for extracted info...
+# ...
 ```
+
+AI: "Do you approve committing this change?"
+
+*(User approves)*
+
+AI: "Approved. Staging changes (`pyproject.toml`, `uv.lock`, `TASKS.md`) and committing."
 
 **(AI prepares and executes git commit):**
 ```bash
-git add TASKS.md <any_other_files_if_created_or_modified>
-git commit -m "Chore: Identify target Doxygen XML files and update TASKS.md"
+git add pyproject.toml uv.lock TASKS.md
+git commit -m "Feat: Add lxml dependency for Doxygen parsing"
 ```
-Proceeding with step 2: **Add `lxml` dependency using `uv add lxml`**. Executing command."
+
+AI: "Commit successful. Waiting for instruction for the next step."
