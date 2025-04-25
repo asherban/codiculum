@@ -1,30 +1,22 @@
 import dataclasses
-from typing import List, Optional
+from typing import Dict, Any, Optional
 
 
 @dataclasses.dataclass
 class Chunk:
     """
-    Represents a chunk of code and its associated metadata,
-    formatted according to the project's chunking strategy.
+    Represents a chunk of code and associated metadata,
+    formatted into a text block suitable for embedding.
+    Aligns with LlamaIndex's expected Node structure (text + metadata).
     """
-    filename: str
-    start_line: int
-    end_line: int
-    code_snippet: str
-    imports: Optional[List[str]] = None
-    brief_description: Optional[str] = None
-    detailed_description: Optional[str] = None
-    usage_examples: Optional[List[str]] = None
-    is_partial: bool = False # Indicates if this chunk resulted from splitting a larger element
+    text: str
+    metadata: Dict[str, Any] = dataclasses.field(default_factory=dict)
 
-    def format_chunk_text(self) -> str:
-        """Formats the chunk data into a single string for embedding."""
-        # TODO: Implement formatting logic based on ChunkingStrategy.md
-        # - Include filename, lines
-        # - Add descriptions
-        # - Add imports
-        # - Add code
-        # - Add examples
-        # - Indicate if partial
-        pass 
+    # Optional: Add properties for commonly accessed metadata for convenience?
+    # @property
+    # def filename(self) -> Optional[str]:
+    #     return self.metadata.get('file_path')
+
+    # @property
+    # def start_line(self) -> Optional[int]:
+    #     return self.metadata.get('start_line')
