@@ -1,7 +1,7 @@
 # Project Tasks
 
 ## Project Setup
-- [~] Initialize project structure (directories, basic files) - *Partially done, core files exist.*
+- [x] Initialize project structure (directories, basic files)
 - [x] Setup `pyproject.toml` with `uv` - *File exists.*
 - [x] **Review existing Python files (`main.py`, `extract_classes.py`) and integrate or remove.** - *Removed `main.py`. Kept `extract_classes.py` as reference for parser/chunker implementation.*
 - [ ] Add initial dependencies (`llama-index`, `chromadb`, `openai`, `streamlit`, `lxml`) using `uv add`

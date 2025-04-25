@@ -173,3 +173,10 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 /data
+
+# VSCode settings
+.vscode/
+
+# Output files from this project
+data/chroma_db/
+data/doxygen_xml/
