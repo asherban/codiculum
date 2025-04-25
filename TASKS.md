@@ -12,7 +12,7 @@
 - [x] Define data structure(s) for extracted code elements (functions, classes, etc.) (`src/codiculum/doxygen_parser/models.py`)
 - [x] Implement XML parsing logic using `lxml` or `xml.etree.ElementTree`
 - [x] Extract relevant information (signatures, docstrings, locations)
-- [ ] Add error handling for parsing
+- [x] Add error handling for parsing - *Basic handling exists in parser.py*
 
 ## 2. Code Chunker
 - [ ] Define chunking strategy (e.g., by function, class)
