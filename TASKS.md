@@ -11,7 +11,7 @@
 - [x] Identify target Doxygen XML files/structure (`data/llvm-project/output/xml/`)
 - [x] Define data structure(s) for extracted code elements (functions, classes, etc.) (`src/codiculum/doxygen_parser/models.py`)
 - [x] Implement XML parsing logic using `lxml` or `xml.etree.ElementTree`
-- [ ] Extract relevant information (signatures, docstrings, locations)
+- [x] Extract relevant information (signatures, docstrings, locations)
 - [ ] Add error handling for parsing
 
 ## 2. Code Chunker
