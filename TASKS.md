@@ -12,6 +12,7 @@
 - [x] Identify target Doxygen XML files/structure (`data/llvm-project/output/xml/`)
 - [x] Define data structure(s) for extracted code elements (`src/codiculum/doxygen_parser/models.py`)
 - [x] Implement and test Doxygen XML parsing for functions/classes (`src/codiculum/doxygen_parser/parser.py`). (Visible outcome: Parser function successfully processes sample XML and returns extracted data structures; includes basic error handling; verified via test or demo script).
+- [x] The doxygen parser component does not have tests - add unit tests.
 
 ## 2. Code Chunker (Refer to `docs/ChunkingStrategy.md`)
 - [x] Create chunker module structure (`src/codiculum/chunker/`) and define `Chunk` model (`src/codiculum/chunker/models.py`).
