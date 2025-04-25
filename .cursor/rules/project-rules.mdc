@@ -26,6 +26,7 @@ This project aims to build a Retrieval-Augmented Generation (RAG) system for cod
 - **Commit:** After each task is completed commit the changes to git. Make a good comment that represents the change that was implemented.
 - **Context Awareness:** Refer to the specified tech stack and project architecture when generating code or suggestions. Ask clarifying questions *only* if the requirements are technically ambiguous or insufficient to proceed.
 - **Code Explanation:** When generating code, provide clear explanations for the *logic*, especially for non-trivial sections, focusing on the *why* rather than just the *what*.
+- **Testing:** Always run `uv run pytest` before finishing a task (before commiting) to make sure all tests pass.
 
 ## Tech Stack
 - **Primary Language:** Python (latest stable version, assume 3.10+)
