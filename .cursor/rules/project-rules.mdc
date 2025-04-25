@@ -20,6 +20,8 @@ This project aims to build a Retrieval-Augmented Generation (RAG) system for cod
     - Maintain a `TASKS.md` file in the project root. This file should list the overall plan and track the status of each sub-task (e.g., using checkboxes `[ ]` for pending, `[x]` for done).
     - Before starting work, ensure the proposed step is documented in `TASKS.md`.
     - After successfully completing *each minimal step*, update `TASKS.md` to mark the step as completed.
+    - Do not continue to the next task after updating TASKS.md and commiting the changes. The user will instruct you when to proceed to the next task in a separate prompt
+    - Always ask the user if the task has been finished, or if is some change needed before finishing the task.
 - **Minimal Iterations:** Focus on completing *one minimal step* at a time per interaction cycle (plan -> execute -> update `TASKS.md` -> commit).
 - **Context Awareness:** Refer to the specified tech stack and project architecture when generating code or suggestions. Ask clarifying questions *only* if the requirements are technically ambiguous or insufficient to proceed.
 - **Code Explanation:** When generating code, provide clear explanations for the *logic*, especially for non-trivial sections, focusing on the *why* rather than just the *what*.
