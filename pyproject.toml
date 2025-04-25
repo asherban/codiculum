@@ -4,4 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "chromadb>=1.0.7",
+    "llama-index>=0.12.33",
+    "lxml>=5.4.0",
+    "openai>=1.76.0",
+    "streamlit>=1.44.1",
+]
