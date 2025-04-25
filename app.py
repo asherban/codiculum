@@ -28,6 +28,7 @@ def load_and_chunk(xml_file_path: Path):
         if parsed_data is None:
             return None, None, f"Error parsing file {xml_file_path.name}"
 
+        # Instantiate CodeChunker with the repo_dir from config
         chunker = CodeChunker(Config().repo_dir)
         chunks = chunker.chunk(parsed_data)
         return parsed_data, chunks, None

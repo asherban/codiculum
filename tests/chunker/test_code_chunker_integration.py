@@ -4,7 +4,7 @@ from typing import List
 
 from src.codiculum.doxygen_parser.models import CodeElement, CodeLocation
 from src.codiculum.chunker.models import Chunk
-from src.codiculum.chunker.code_chunker import create_chunks_from_doxygen
+from src.codiculum.chunker.code_chunker import CodeChunker
 
 # --- Test Data Setup ---
 
@@ -111,10 +111,10 @@ def test_create_chunks_from_doxygen_integration(dummy_src_dir: Path):
           # mock_retrieve.side_effect = lambda loc, base: ... 
           # mock_format.side_effect = lambda element, snippet: ...
 
-    # --- Call the function under test ---
-    actual_chunks: List[Chunk] = create_chunks_from_doxygen(
-        parsed_data=DUMMY_PARSED_DATA,
-        src_base_path=src_base_path
+    # --- Instantiate the chunker and call its method ---
+    chunker = CodeChunker(src_base_path=src_base_path)
+    actual_chunks: List[Chunk] = chunker.chunk(
+        parsed_data=DUMMY_PARSED_DATA
     )
 
     # --- Assertions ---

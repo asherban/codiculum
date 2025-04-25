@@ -59,88 +59,94 @@ Code:
         metadata=metadata
     )
 
-
-def create_chunks_from_doxygen(
-    parsed_data: List[CodeElement], # Corrected type hint
-    src_base_path: Path
-) -> List[Chunk]:
+# Define the CodeChunker class
+class CodeChunker:
     """
-    Orchestrates the creation of code chunks from parsed Doxygen data.
-
-    Args:
-        parsed_data: A list of CodeElement objects representing parsed code elements
-                     (functions, classes, etc.) from Doxygen XML.
-        src_base_path: The root path of the source code directory.
-
-    Returns:
-        A list of Chunk objects ready for embedding.
+    Responsible for chunking code elements based on parsed Doxygen data
+    and retrieving corresponding source code snippets.
     """
-    chunks: List[Chunk] = []
-    processed_count = 0
-    error_count = 0
+    def __init__(self, src_base_path: str | Path):
+        """
+        Initializes the CodeChunker.
 
-    logger.info(f"Starting chunk creation for {len(parsed_data)} parsed elements.")
+        Args:
+            src_base_path: The root path of the source code directory.
+        """
+        self.src_base_path = Path(src_base_path)
+        if not self.src_base_path.is_dir():
+            logger.warning(f"Source base path not found or not a directory: {self.src_base_path}")
+            # Or raise an error depending on desired strictness
+            # raise ValueError(f"Source base path not found or not a directory: {self.src_base_path}")
 
-    for element in parsed_data:
-        # ---- REMOVE DEBUGGING ----
-        # logger.debug(f"Processing element: ID={element.id}, Name={element.name}, Kind={element.kind}")
-        # if hasattr(element, 'location'):
-        #     logger.debug(f"  Element location object: {element.location!r}")
-        #     if element.location:
-        #         logger.debug(f"  Location attributes: file={getattr(element.location, 'file', 'N/A')}, start={getattr(element.location, 'start_line', 'N/A')}, end={getattr(element.location, 'end_line', 'N/A')}")
-        #     else:
-        #         logger.debug(f"  Element location is None.")
-        # else:
-        #     logger.debug(f"  Element has no 'location' attribute.")
-        # ---- REMOVE DEBUGGING ----
+    def chunk(self, parsed_data: List[CodeElement]) -> List[Chunk]:
+        """
+        Orchestrates the creation of code chunks from parsed Doxygen data.
 
-        if not element.location or not element.location.file or element.location.start_line is None:
-            logger.warning(f"Skipping element '{element.name}' due to missing or incomplete location information.")
-            error_count += 1
-            continue
+        Args:
+            parsed_data: A list of CodeElement objects representing parsed code elements
+                         (functions, classes, etc.) from Doxygen XML.
 
-        try:
-            # Correct function call for retriever
-            full_file_path = src_base_path / element.location.file
-            if not full_file_path.is_file():
-                logger.error(f"Source file not found at calculated path: {full_file_path}. Skipping element '{element.name}'.")
+        Returns:
+            A list of Chunk objects ready for embedding.
+        """
+        chunks: List[Chunk] = []
+        processed_count = 0
+        error_count = 0
+
+        logger.info(f"Starting chunk creation for {len(parsed_data)} parsed elements.")
+
+        for element in parsed_data:
+            if not element.location or not element.location.file or element.location.start_line is None:
+                logger.warning(f"Skipping element '{element.name}' due to missing or incomplete location information.")
                 error_count += 1
                 continue
 
-            # Doxygen line numbers are usually 1-based
-            start_line = element.location.start_line
-            end_line = element.location.end_line
-            # Add check for None values, although parser should handle this ideally
-            if start_line is None or end_line is None:
-                 logger.warning(f"Skipping element '{element.name}' due to missing start/end line numbers.")
-                 error_count += 1
-                 continue
+            try:
+                full_file_path = self.src_base_path / element.location.file
+                if not full_file_path.is_file():
+                    logger.error(f"Source file not found at calculated path: {full_file_path}. Skipping element '{element.name}'.")
+                    error_count += 1
+                    continue
 
-            snippet = retrieve_source_snippet(
-                filepath=str(full_file_path), # Pass absolute path as string
-                start_line=start_line,
-                end_line=end_line
-            )
+                start_line = element.location.start_line
+                end_line = element.location.end_line
+                if start_line is None or end_line is None:
+                    logger.warning(f"Skipping element '{element.name}' due to missing start/end line numbers.")
+                    error_count += 1
+                    continue
 
-            # Correct function call for formatter (local function)
-            chunk = format_element_to_chunk(element, snippet)
-            chunks.append(chunk)
-            processed_count += 1
+                snippet = retrieve_source_snippet(
+                    filepath=str(full_file_path),
+                    start_line=start_line,
+                    end_line=end_line
+                )
 
-        except FileNotFoundError: # Should be caught by the check above, but keep as fallback
-            logger.error(f"Source file not found for element '{element.name}': {src_base_path / element.location.file}. Skipping.")
-            error_count += 1
-        except (ValueError, IndexError) as e:
-            logger.error(f"Error retrieving snippet for element '{element.name}' in '{element.location.file}': {e}. Skipping.")
-            error_count += 1
-        except Exception as e:
-            # Catch potential errors during formatting or unexpected issues
-            logger.error(f"Failed to create chunk for element '{element.name}': {e}", exc_info=True) # Include traceback
-            error_count += 1
+                # Call the standalone formatting function
+                chunk = format_element_to_chunk(element, snippet)
+                chunks.append(chunk)
+                processed_count += 1
 
-    logger.info(f"Chunk creation finished. Processed: {processed_count}, Errors/Skipped: {error_count}, Total Chunks: {len(chunks)}")
-    return chunks
+            except FileNotFoundError:
+                logger.error(f"Source file not found for element '{element.name}': {self.src_base_path / element.location.file}. Skipping.")
+                error_count += 1
+            except (ValueError, IndexError) as e:
+                logger.error(f"Error retrieving snippet for element '{element.name}' in '{element.location.file}': {e}. Skipping.")
+                error_count += 1
+            except Exception as e:
+                logger.error(f"Failed to create chunk for element '{element.name}': {e}", exc_info=True)
+                error_count += 1
+
+        logger.info(f"Chunk creation finished. Processed: {processed_count}, Errors/Skipped: {error_count}, Total Chunks: {len(chunks)}")
+        return chunks
 
 
-# def chunk_code(): # Placeholder - keep for now
-#     pass 
+# # Original function moved into the class method above
+# def create_chunks_from_doxygen(
+#     parsed_data: List[CodeElement], # Corrected type hint
+#     src_base_path: Path
+# ) -> List[Chunk]:
+#     # ... implementation moved ...
+#     pass
+
+# # def chunk_code(): # Placeholder - keep for now
+# #     pass 
