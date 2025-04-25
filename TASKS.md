@@ -5,7 +5,7 @@
 - [x] Setup `pyproject.toml` with `uv` - *File exists.*
 - [x] **Review existing Python files (`main.py`, `extract_classes.py`) and integrate or remove.** - *Removed `main.py`. Kept `extract_classes.py` as reference for parser/chunker implementation.*
 - [x] Add initial dependencies (`llama-index`, `chromadb`, `openai`, `streamlit`, `lxml`) using `uv add`
-- [ ] Initial commit - *Needs to be done after setup is complete.*
+- [x] Initial commit - *Done as part of adding dependencies.*
 
 ## 1. Doxygen Parser
 - [ ] Identify target Doxygen XML files/structure
