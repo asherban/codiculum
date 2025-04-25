@@ -8,7 +8,7 @@
 - [x] Initial commit - *Done as part of adding dependencies.*
 
 ## 1. Doxygen Parser
-- [ ] Identify target Doxygen XML files/structure
+- [x] Identify target Doxygen XML files/structure (`data/llvm-project/output/xml/`)
 - [ ] Define data structure(s) for extracted code elements (functions, classes, etc.)
 - [ ] Implement XML parsing logic using `lxml` or `xml.etree.ElementTree`
 - [ ] Extract relevant information (signatures, docstrings, locations)
