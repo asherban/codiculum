@@ -6,6 +6,7 @@
 - [x] Review existing Python files (`main.py`, `extract_classes.py`) and integrate or remove.
 - [x] Add initial dependencies (`llama-index`, `chromadb`, `openai`, `streamlit`, `lxml`) using `uv add`
 - [x] Initial commit
+- [x] Configure pytest to run tests only from the `tests` directory.
 
 ## 1. Doxygen Parser
 - [x] Identify target Doxygen XML files/structure (`data/llvm-project/output/xml/`)
