@@ -43,3 +43,9 @@
 ## 8. Documentation
 - [ ] Update README.md with comprehensive setup, usage instructions, and architecture overview.
 - [ ] Perform final review and add/update docstrings for all public modules and functions.
+
+## Testing
+- [x] Fix TypeError in `tests/chunker/test_code_chunker.py::test_format_element_to_chunk`
+- [x] Fix AssertionError in `tests/chunker/test_code_chunker_integration.py` (metadata key mismatch)
+
+## Doxygen XML Parser

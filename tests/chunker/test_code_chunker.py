@@ -19,17 +19,29 @@ def test_format_element_to_chunk():
     )
     source_snippet = "def test_function():\n    print('Hello')\n"
 
+    # Construct the expected text representation for the chunk
+    expected_text = f"""Brief: {element.brief_description}
+Detailed: {element.detailed_description}
+
+Code:
+```python
+{source_snippet}```"""
+
     expected_chunk = Chunk(
-        filename="src/example.py",
-        start_line=5,
-        end_line=10,
-        code_snippet=source_snippet,
-        brief_description="A test function.",
-        detailed_description="Does nothing useful.",
-        # Other fields like imports, usage_examples, is_partial can be None/default for now
+        text=expected_text,
+        metadata={
+            "id": "test_func_1",
+            "name": "test_function",
+            "kind": "function",
+            "file_path": "src/example.py",
+            "start_line": 5,
+            "end_line": 10,
+            "brief_description": "A test function.",
+            "detailed_description": "Does nothing useful.",
+        }
     )
 
-    # This will fail initially as format_element_to_chunk is not implemented
+    # TODO: Implement format_element_to_chunk in src/codiculum/chunker/code_chunker.py
     actual_chunk = format_element_to_chunk(element, source_snippet)
 
     assert actual_chunk == expected_chunk 
