@@ -23,7 +23,7 @@ This project aims to build a Retrieval-Augmented Generation (RAG) system for cod
     - After successfully completing *each task*, update `TASKS.md` to mark the step as completed.
 - **Single Task Interaction:** Focus on completing *exactly one minimal step* per interaction cycle (plan -> execute -> demonstrate -> update `TASKS.md`).
 - **Demonstrable Outcome:** Each completed step must result in a workable demo, a tangible output, or clear instructions for the user to verify the change (e.g., run a command, inspect a file). The AI should run the demo to the user
-- **User Approval & Commit:** After demonstrating the outcome and updating `TASKS.md`, **wait for user approval**. Once approved, proceed to the commit step. Do not proceed to the next task. Do not wait for user approval in between parts of the same task.
+- **Commit:** After each task is completed commit the changes to git. Make a good comment that represents the change that was implemented.
 - **Context Awareness:** Refer to the specified tech stack and project architecture when generating code or suggestions. Ask clarifying questions *only* if the requirements are technically ambiguous or insufficient to proceed.
 - **Code Explanation:** When generating code, provide clear explanations for the *logic*, especially for non-trivial sections, focusing on the *why* rather than just the *what*.
 
@@ -36,6 +36,7 @@ This project aims to build a Retrieval-Augmented Generation (RAG) system for cod
 - **Embeddings:** OpenAI's text-embedding models (e.g., `text-embedding-ada-002` or newer) via LlamaIndex integration or direct API calls.
 - **Frontend (Test App):** Streamlit
 - **Core Libraries (Managed via `uv` in `pyproject.toml`):** `llama-index`, `chromadb`, `openai`, `streamlit`, `lxml` or `xml.etree.ElementTree` (for XML parsing)
+- **Tasking is done with pytest**
 
 ## Project Architecture Overview
 1.  **Doxygen Parser:** Module to read/parse Doxygen XML. Extract functions, classes, comments, structure.
@@ -54,18 +55,17 @@ This project aims to build a Retrieval-Augmented Generation (RAG) system for cod
 - **Dependencies:** Manage via `uv` (`pyproject.toml`, `uv.lock`). Sync environment with `uv sync`.
 
 ## Workflow & Version Control
-- **Task File:** Use `TASKS.md` in the root directory to list and track tasks/sub-tasks. Ensure tasks are granular enough to fit the single-task interaction model and result in a demonstrable outcome.
+- **Task File:** Use `TASKS.md` in the root directory to list and track tasks/sub-tasks. See [project-managment.mdc](mdc:.cursor/rules/project-managment.mdc) for information on how to structure Tasks.
 - **Interaction Cycle:**
-    1.  Define the minimal task and update `TASKS.md` (`[ ]`).
-    2.  Execute the task.
-    3.  Demonstrate the outcome (run demo or provide instructions/output).
-    4.  Update `TASKS.md` (`[x]`).
+    1.  Select a task that was not completed from `TASKS.md` (`[ ]`).
+    2.  Write a test if possible before starting the task. Show it is failing
+    3.  Execute the task.
+    4.  Demonstrate the outcome (run test, run a demo or provide instructions/output).
+    5.  Update `TASKS.md` (`[x]`).
     5.  Ask for user approval to commit.
     6.  **Wait for user approval.**
-    7.  Upon approval, stage relevant files (`TASKS.md` included).
-    8.  Generate and execute a concise, descriptive `git commit` message using conventional prefixes (e.g., "Feat: ...", "Fix: ...", "Chore: Update TASKS.md").
+    7.  Upon approval, stage and commit all relevant files (`TASKS.md` included) with a descriptive `git commit` message using conventional prefixes (e.g., "Feat: ...", "Fix: ...", "Chore: Update TASKS.md").
     9.  Stop and wait for the next user instruction.
-- **Atomic Commits:** Each commit corresponds to one approved, completed minimal task.
 
 ## Specific Instructions
 - **Doxygen Parsing:** Extract function/method signatures, doc blocks, relationships from XML. Use standard Python XML libs.

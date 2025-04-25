@@ -1,0 +1,16 @@
+---
+description: 
+globs: tests/**/*.py
+alwaysApply: false
+---
+# Testing Instructions
+
+## Doxygen XML Test Data
+
+XML examples extracted with Doygen is available in the following directories:
+- data/llvm-project/output/xml/
+
+Any time you need to write a test that requires Doxygen XML examples you can look
+in that directory, and pick any relevant file (You can use @Doxygen documentation)
+
+Any file used should be copied to the `tests/data` directory

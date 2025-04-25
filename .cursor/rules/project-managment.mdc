@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Rule Name: project-managment
+Description: 
+When breaking down tasks, ensure each minimal task results in a **visible change directly related to the project's requirements**. This could be:
+- A new feature demonstrated (e.g., via a small script run, output shown, or run a test and pass it that was previously failing).
+- A new test case added.
+- An existing test case modified to cover new functionality.
+- A specific, requirement-related output file generated or updated.
+
+Tasks that are purely internal setup (e.g., installing dependencies) or internal refactoring without functional changes should be bundled into the first task that *does* produce such a visible outcome. Always update `TASKS.md` before starting and after completing a task, and seek approval before committing the change associated with the completed task.
+
+Each bullet in TASKS.md (`- [ ]`) should be a complete task not a step in a task. 
