@@ -14,10 +14,14 @@
 - [x] Extract relevant information (signatures, docstrings, locations)
 - [x] Add error handling for parsing - *Basic handling exists in parser.py*
 
-## 2. Code Chunker
-- [ ] Define chunking strategy (e.g., by function, class)
-- [ ] Implement chunking logic based on parsed Doxygen data
-- [ ] Consider source code retrieval if needed for full context
+## 2. Code Chunker (Refer to `docs/ChunkingStrategy.md` for implementation guidelines)
+- [x] Step 1: Create chunker module structure (`src/codiculum/chunker/`, `__init__.py`, `code_chunker.py`, `models.py`).
+- [x] Step 2: Define `Chunk` data structure in `src/codiculum/chunker/models.py` based on `ChunkingStrategy.md`.
+- [ ] Step 3: Define main chunking function signature in `src/codiculum/chunker/code_chunker.py`.
+- [ ] Step 4: Implement logic to retrieve source code snippets based on Doxygen location data.
+- [ ] Step 5: Implement logic to format a single code element (e.g., function) into a chunk string according to `ChunkingStrategy.md`.
+- [ ] Step 6: Implement main loop iterating through parsed Doxygen elements and calling the formatting function.
+- [ ] Step 7: Implement logic to handle chunks exceeding token limits (splitting).
 
 ## 3. Embedding Generator
 - [ ] Configure OpenAI embedding model via LlamaIndex settings
