@@ -1,4 +1,5 @@
-import pytest
+# import pytest # Removed unused import
+# from pathlib import Path # Removed unused import
 from src.codiculum.doxygen_parser.models import CodeElement, CodeLocation
 from src.codiculum.chunker.models import Chunk
 from src.codiculum.chunker.code_chunker import format_element_to_chunk

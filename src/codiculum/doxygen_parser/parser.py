@@ -1,7 +1,6 @@
 # src/codiculum/doxygen_parser/parser.py
-import os
-from typing import List, Optional
 from lxml import etree
+from typing import List, Optional
 from codiculum.doxygen_parser.models import CodeElement, CodeLocation
 from pathlib import Path
 

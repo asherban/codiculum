@@ -1,8 +1,11 @@
 import pytest
-from lxml import etree
 from pathlib import Path
-from codiculum.doxygen_parser.parser import parse_doxygen_xml, extract_text
-from codiculum.doxygen_parser.models import CodeElement, CodeLocation
+# import lxml.etree as ET # Removed unused import
+
+# from codiculum.doxygen_parser.parser import parse_doxygen_xml, extract_text # Removed unused extract_text
+from codiculum.doxygen_parser.parser import parse_doxygen_xml
+# from codiculum.doxygen_parser.models import CodeElement, CodeLocation # Removed unused CodeElement
+from codiculum.doxygen_parser.models import CodeLocation
 
 # Fixture to provide the path to the test XML data directory
 @pytest.fixture

@@ -1,11 +1,12 @@
 # Contains the main logic for chunking code based on Doxygen output.
 
+import logging
 from pathlib import Path
-from typing import List, Dict, Any # Placeholder for actual Doxygen data type
+# Use List directly if Python >= 3.9
+from typing import List # , Dict, Any Removed unused imports
 from .models import Chunk
 from .source_retriever import retrieve_source_snippet
-from ..doxygen_parser.models import CodeElement, CodeLocation # Use the correct model name from doxygen_parser
-import logging # Add logging
+from ..doxygen_parser.models import CodeElement # , CodeLocation Removed unused import
 
 # Configure basic logging - Reset to INFO
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')

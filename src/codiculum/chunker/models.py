@@ -1,8 +1,8 @@
-import dataclasses
-from typing import Dict, Any, Optional
+from dataclasses import dataclass, field
+from typing import Dict, Any
 
 
-@dataclasses.dataclass
+@dataclass
 class Chunk:
     """
     Represents a chunk of code and associated metadata,
@@ -10,7 +10,7 @@ class Chunk:
     Aligns with LlamaIndex's expected Node structure (text + metadata).
     """
     text: str
-    metadata: Dict[str, Any] = dataclasses.field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     # Optional: Add properties for commonly accessed metadata for convenience?
     # @property

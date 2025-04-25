@@ -85,7 +85,7 @@ def parse_doxygen_xml_file(xml_file_path: str) -> List[CodeElement]:
 
             # TODO: Extract signature/parameters more reliably if needed
             # For now, detailed_description often contains it, or use 'argsstring'
-            signature = _get_text(memberdef, 'argsstring') # Often contains the arguments part
+            # signature = _get_text(memberdef, 'argsstring') # Removed unused variable assignment
 
 
             element = CodeElement(
