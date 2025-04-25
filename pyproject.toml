@@ -11,3 +11,14 @@ dependencies = [
     "openai>=1.76.0",
     "streamlit>=1.44.1",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+]
+
+[tool.pytest.ini_options]
+pythonpath = [
+    ".",
+    "src",
+]
