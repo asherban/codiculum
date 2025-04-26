@@ -103,12 +103,45 @@ if selected_xml_file_name:
         selected_chunk = chunk_map.get(selected_element_id)
 
         st.subheader(f"Generated Chunk for: `{selected_element_display_name}`")
+
         if selected_chunk:
-            st.markdown(f"""```cpp
-{selected_chunk.text}
-```""")  # Assuming C++ for now
-            st.write("**Metadata:**")
-            st.json(selected_chunk.metadata)
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.markdown("##### Chunk Content")
+                # Assuming C++ for now, adjust language if needed
+                st.code(selected_chunk.text, language="cpp", line_numbers=False)
+                st.markdown("##### Chunk Metadata")
+                st.json(selected_chunk.metadata)
+
+            with col2:
+                st.markdown("##### Source File Content")
+                file_path_str = selected_chunk.metadata.get("file_path")
+                start_line = selected_chunk.metadata.get("start_line", 1) # Default to 1 if not found
+
+                if file_path_str:
+                    source_file_path = Path(SOURCE_BASE_DIR) / file_path_str
+                    st.caption(f"File: `{source_file_path}` (Chunk starts ~line {start_line})")
+                    try:
+                        # Read the source file content
+                        source_content = source_file_path.read_text(encoding="utf-8", errors="ignore")
+
+                        # Display the source code using st.code with line numbers
+                        st.code(
+                            source_content,
+                            language="cpp",  # Adjust based on file type if possible/needed
+                            line_numbers=True,
+                        )
+                        # Note: Directly jumping to start_line in st.code isn't natively supported.
+                        # Users will need to scroll manually. Advanced components might offer this.
+
+                    except FileNotFoundError:
+                        st.error(f"Source file not found: {source_file_path}")
+                    except Exception as e:
+                        st.error(f"Error reading source file {source_file_path}: {e}")
+                else:
+                    st.warning("Source file path not found in chunk metadata.")
+
         else:
             st.warning(
                 f"No chunk found for element ID: {selected_element_id}. This might be expected if the element type is not chunked (e.g., 'file')."

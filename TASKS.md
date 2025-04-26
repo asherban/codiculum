@@ -39,6 +39,7 @@
 ## 6. Streamlit UI
 - [ ] Create basic Streamlit app layout (`app.py`). (Visible outcome: `uv run streamlit run app.py` shows input field, button, output area).
 - [ ] Integrate RAG query functionality into Streamlit app. (Visible outcome: App takes user query, calls RAG engine on button click, displays response).
+- [x] Display source file content alongside chunk in Streamlit app.
 
 ## 7. Refinement & End-to-End Testing
 - [ ] Perform end-to-end testing using representative Doxygen data and user queries.
@@ -54,3 +55,69 @@
 - [x] Fix AssertionError in `tests/chunker/test_code_chunker_integration.py` (metadata key mismatch)
 
 ## Doxygen XML Parser
+- [ ] Display source file content alongside chunk in Streamlit app.
+
+## Project Setup & Core Dependencies
+- [x] Initialize project structure (`src`, `tests`, `data`)
+- [x] Set up `uv` and `pyproject.toml` with basic dependencies (`llama-index`, `chromadb`, `openai`, `streamlit`, `lxml`, `pytest`)
+- [x] Configure basic `pytest` setup (`pytest.ini`, simple test in `tests/`)
+- [x] Create initial `TASKS.md` file.
+- [x] Add `.gitignore`.
+
+## Doxygen Parser (`codiculum.doxygen_parser`)
+- [x] Step 1: Add `lxml` dependency via `uv add lxml` and verify installation.
+- [x] Step 2: Define data structure for extracted info (e.g., `FunctionInfo`, `ClassInfo`, `FileInfo`, `Location`) in `src/codiculum/doxygen_parser/models.py`.
+- [x] Step 3: Implement function: parse single `<compounddef>` (file) element in `src/codiculum/doxygen_parser/_parser.py`. Add test `tests/doxygen_parser/test_parse_compounddef_file.py`.
+- [x] Step 4: Implement function: parse single `<compounddef>` (class/struct) element in `src/codiculum/doxygen_parser/_parser.py`. Add test `tests/doxygen_parser/test_parse_compounddef_class.py`.
+- [x] Step 5: Implement function: parse single `<memberdef>` (function/method) element in `src/codiculum/doxygen_parser/_parser.py`. Add test `tests/doxygen_parser/test_parse_memberdef_function.py`.
+- [x] Step 6: Implement main entry point `parse_doxygen_xml_file(xml_path)` and `parse_doxygen_xml_dir(dir_path)` in `src/codiculum/doxygen_parser/__init__.py`. Add integration test `tests/doxygen_parser/test_parser_integration.py`.
+- [x] Step 7: Refine parsing to extract detailed description (`briefdescription`, `detaileddescription`) from elements. Update tests.
+- [x] Step 8: Handle `@param` and `@return` documentation within function/method memberdefs. Update `FunctionInfo` model and parser logic. Update tests.
+
+## Code Chunker (`codiculum.chunker`)
+- [x] Step 1: Define `CodeChunk` data structure (`text`, `metadata` including `id`, `kind`, `name`, `file_path`, `start_line`, `end_line`, `url`, `signature`, `docstring`).
+- [x] Step 2: Implement `CodeChunker` class in `src/codiculum/chunker.py`.
+- [x] Step 3: Implement chunking logic for functions/methods within `CodeChunker.chunk()`. Use `Location` info and read source file content. Add test `tests/chunker/test_chunk_function.py`.
+- [x] Step 4: Implement chunking logic for classes/structs within `CodeChunker.chunk()`. Include signature/definition and docstring. Add test `tests/chunker/test_chunk_class.py`.
+- [x] Step 5: Handle potential file reading errors gracefully during chunking. Add test case for missing file.
+- [x] Step 6: Refine metadata stored in `CodeChunk` (e.g., add qualified name).
+- [x] Step 7: Add URL generation based on repo structure (e.g., GitHub link structure) if `repo_url` is provided.
+
+## Streamlit UI (`app.py`)
+- [x] Step 1: Create basic Streamlit app (`app.py`) to list Doxygen XML files from a specified directory (`data/doxygen_output/xml`).
+- [x] Step 2: Add dropdown to select an XML file.
+- [x] Step 3: On file selection, call `parse_doxygen_xml_file`.
+- [x] Step 4: Display parsed element names (functions, classes) in a selectable list/dropdown.
+- [x] Step 5: Instantiate `CodeChunker` and call `.chunk()` on the parsed data.
+- [x] Step 6: When an element is selected, display the corresponding generated `CodeChunk` text and metadata.
+- [x] Display source file content alongside chunk in Streamlit app.
+
+## Embedding & Vector Store (`codiculum.embedding`, `codiculum.vector_store`)
+- [ ] Step 1: Define `EmbeddingGenerator` interface/class using OpenAI API.
+- [ ] Step 2: Implement `VectorStoreManager` interface/class using ChromaDB.
+- [ ] Step 3: Integrate LlamaIndex `ChromaVectorStore`.
+- [ ] Step 4: Create script (`scripts/generate_embeddings.py`) to:
+    *   Parse Doxygen XML directory.
+    *   Chunk the parsed data.
+    *   Generate embeddings for chunks.
+    *   Store chunks and embeddings in ChromaDB.
+
+## RAG Pipeline (`codiculum.rag`)
+- [ ] Step 1: Implement basic RAG query engine using LlamaIndex, ChromaDB vector store, and OpenAI LLM.
+- [ ] Step 2: Integrate RAG engine into the Streamlit app for querying.
+
+## Testing & Refinement
+- [ ] Add more comprehensive integration tests.
+- [ ] Refine chunking strategy based on initial RAG results.
+- [ ] Add error handling and logging throughout the application.
+- [ ] Create `README.md` with setup and usage instructions.
+
+## Documentation
+- [ ] Add docstrings to all public modules, classes, and functions.
+- [ ] Generate project documentation (e.g., using Sphinx or MkDocs).
+
+## Future Enhancements
+- [ ] Support for other languages/Doxygen outputs.
+- [ ] More sophisticated chunking strategies (e.g., recursive splitting).
+- [ ] Integration with different vector stores or embedding models.
+- [ ] Evaluation framework for RAG performance.
