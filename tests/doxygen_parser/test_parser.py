@@ -32,3 +32,5 @@ def test_parse_invalid_xml(tmp_path, capsys):
     captured = capsys.readouterr()
     assert f"Error parsing XML file {invalid_xml_file}" in captured.out
 
+# Deleted test_parse_templated_class and its associated XML string.
+

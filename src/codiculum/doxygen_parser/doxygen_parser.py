@@ -12,7 +12,7 @@ def _get_text(element, tag: str) -> Optional[str]:
     """Safely gets the text content of a direct child tag."""
     child = element.find(tag)
     if child is not None and child.text:
-        return child.text.strip()
+        return " ".join(text.strip() for text in child.itertext() if text.strip())
     # Sometimes text is nested within paragraphs <para>
     para = element.find(f"{tag}/para")
     if para is not None and para.text:
@@ -35,6 +35,42 @@ def _get_detailed_description_text(element) -> Optional[str]:
     return text_content if text_content else None
 
 
+def _parse_template_params(element: etree.Element) -> Optional[str]:
+    """Parses the <templateparamlist> and reconstructs the template<...> string."""
+    template_param_list = element.find("templateparamlist")
+    if template_param_list is None or len(template_param_list) == 0:
+        return None
+
+    params = []
+    for param in template_param_list.findall("param"):
+        # Get the full type description which might include the name
+        param_type_text = _get_text(param, "type")
+        ()
+        if not param_type_text:
+            continue # Skip parameters without type
+
+        # Doxygen might put the whole declaration in <type>, e.g., "typename DerivedTy"
+        # Or it might split it into <type>typename</type> and <declname>DerivedTy</declname>
+        # We prioritize the full text from <type> if it seems complete.
+        param_declname = _get_text(param, "declname")
+
+        param_str = param_type_text
+        # If declname exists and is NOT already included at the end of type_text, append it.
+        if param_declname and not param_type_text.rstrip().endswith(param_declname):
+             param_str = f"{param_type_text} {param_declname}"
+
+        # Fallback for defname - less common but possible
+        # param_defname = _get_text(param, "defname")
+        # if param_defname and not param_str.rstrip().endswith(param_defname):
+        #     param_str = f"{param_str} {param_defname}"
+        params.append(param_str.strip())
+
+    if not params:
+        return None
+
+    return f"template <{', '.join(params)}>"
+
+
 def _parse_class_def(compound_def: etree.Element) -> Optional[CodeElement]:
     element_id = compound_def.get("id")
     kind = compound_def.get("kind")
@@ -50,6 +86,7 @@ def _parse_class_def(compound_def: etree.Element) -> Optional[CodeElement]:
 
     brief_desc = _get_text(compound_def, "briefdescription")
     detailed_desc = _get_detailed_description_text(compound_def)
+    template_params = _parse_template_params(compound_def)
 
     location_element = compound_def.find("location")
     location = None
@@ -77,8 +114,9 @@ def _parse_class_def(compound_def: etree.Element) -> Optional[CodeElement]:
         brief_description=brief_desc,
         detailed_description=detailed_desc,
         location=location,
+        template_params=template_params,
     )
-    logger.debug(f"Extracted function element: {name} ({kind})")
+    logger.debug(f"Extracted class element: {name} ({kind}), Template: {template_params}")
     return element
 
 def parse_doxygen_xml_file(xml_file_path: str) -> List[CodeElement]:

@@ -27,6 +27,14 @@ void dummy_function(int param1) {
 int another_func() {
     return 42;
 }
+
+// Templated class for testing
+template<typename T>
+class MyTemplateClass {
+public:
+    T data;
+    MyTemplateClass(T val) : data(val) {}
+};
 """
 
 # Minimal dummy parsed data corresponding to the source
@@ -49,6 +57,20 @@ DUMMY_PARSED_DATA: List[CodeElement] = [
         brief_description=None,
         detailed_description="Signature: int another_func()",
         location=CodeLocation(file="src/dummy.cpp", start_line=15, end_line=17),
+    )
+]
+
+# New dummy data for the templated class
+DUMMY_TEMPLATED_PARSED_DATA: List[CodeElement] = [
+    CodeElement(
+        id="class_template_1",
+        name="MyTemplateClass",
+        kind="class",
+        language="C++",
+        brief_description="A templated class.",
+        detailed_description="Holds data of type T.",
+        location=CodeLocation(file="src/dummy.cpp", start_line=22, end_line=26), # Corrected lines
+        template_params="template <typename T>"
     )
 ]
 
@@ -147,5 +169,52 @@ def test_create_chunks_from_doxygen_integration(dummy_src_dir: Path):
     assert chunk2.metadata['id'] == 'func_dummy_2'
     assert 'another_func()' in chunk2.text
     assert 'return 42;' in chunk2.text
+
+    # Add more specific assertions based on the expected Chunk structure and content 
+
+
+def test_create_chunk_from_templated_class(dummy_src_dir: Path):
+    """
+    Integration test specifically for a templated class element.
+    """
+    src_base_path = dummy_src_dir
+
+    # --- Instantiate the chunker and call its method with templated data ---
+    chunker = CodeChunker(src_base_path=src_base_path)
+    actual_chunks: List[Chunk] = chunker.chunk(
+        parsed_data=DUMMY_TEMPLATED_PARSED_DATA
+    )
+
+    # --- Assertions ---
+    assert len(actual_chunks) == 1, "Should create one chunk for the templated class element"
+
+    # Verify the templated class chunk
+    chunk = actual_chunks[0]
+    assert chunk is not None
+    assert chunk.metadata['kind'] == 'class'
+    assert chunk.metadata['name'] == 'MyTemplateClass'
+    assert chunk.metadata['file_path'] == 'src/dummy.cpp'
+    assert chunk.metadata['start_line'] == 22
+    assert chunk.metadata['end_line'] == 26
+    assert chunk.metadata['id'] == 'class_template_1'
+    assert chunk.metadata['template_params'] == "template <typename T>"
+
+    # Verify text content (check key parts)
+    assert "File: src/dummy.cpp" in chunk.text
+    assert "Template: template <typename T>" not in chunk.text # Ensure separate line is gone
+    assert "Brief: A templated class." in chunk.text
+    assert "Detailed: Holds data of type T." in chunk.text
+    # Check that the actual code snippet includes the template signature *and* the class body
+    expected_code_block = (
+        "```cpp\n"
+        "template <typename T>\n"
+        "class MyTemplateClass {\n"
+        "public:\n"
+        "    T data;\n"
+        "    MyTemplateClass(T val) : data(val) {}\n"
+        "};\n"
+        "```"
+    )
+    assert expected_code_block in chunk.text
 
     # Add more specific assertions based on the expected Chunk structure and content 

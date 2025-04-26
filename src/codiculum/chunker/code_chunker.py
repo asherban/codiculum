@@ -34,14 +34,29 @@ def format_element_to_chunk(element: CodeElement, source_snippet: str) -> Chunk:
     # Construct the text content exactly as defined in the unit test
     # Note: We assume 'python' for the code block language for simplicity here.
     # A more robust solution might inspect the file extension.
-    expected_text = f"""File: {element.location.file}
-Brief: {element.brief_description}
-Detailed: {element.detailed_description}
+    text_parts = []
+    text_parts.append(f"File: {element.location.file}")
 
-Code:
-```{element.language}
-{source_snippet}
-```"""
+    # Use Kind/Name or Brief/Detailed depending on preference or available info
+    # Let's prioritize Brief/Detailed for now as per previous test structure
+    if element.brief_description:
+        text_parts.append(f"Brief: {element.brief_description}")
+    if element.detailed_description:
+        text_parts.append(f"Detailed: {element.detailed_description}")
+
+    # Prepare the code snippet, potentially prepending template params
+    full_code_snippet = source_snippet
+    if element.template_params:
+        full_code_snippet = f"{element.template_params}\n{source_snippet}"
+
+    # Use code language from element if available, otherwise default or guess
+    lang = element.language.lower() if element.language else ''
+    if lang == 'c++':
+        lang = 'cpp' # Common markdown identifier
+
+    text_parts.append(f"\nCode:\n```{lang}\n{full_code_snippet}\n```")
+
+    chunk_text = "\n".join(text_parts)
 
     # Populate metadata as expected by the unit test
     metadata = {
@@ -53,11 +68,12 @@ Code:
         "end_line": element.location.end_line,
         "brief_description": element.brief_description or "", # Ensure not None
         "detailed_description": element.detailed_description or "", # Ensure not None
+        "template_params": element.template_params or "",
         # Note: source_snippet is now part of the main 'text' field
     }
 
     return Chunk(
-        text=expected_text,
+        text=chunk_text,
         metadata=metadata
     )
 

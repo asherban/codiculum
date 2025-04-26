@@ -22,14 +22,14 @@ def test_format_element_to_chunk():
     source_snippet = "def test_function():\n    print('Hello')\n"
 
     # Construct the expected text representation for the chunk
+    # Template params (empty in this case) are now prepended to the code snippet
+    expected_code_block = f"```python\n{source_snippet}\n```"
     expected_text = f"""File: src/example.py
 Brief: {element.brief_description}
 Detailed: {element.detailed_description}
 
 Code:
-```python
-{source_snippet}
-```"""
+{expected_code_block}"""
 
     expected_chunk = Chunk(
         text=expected_text,
@@ -42,6 +42,7 @@ Code:
             "end_line": 10,
             "brief_description": "A test function.",
             "detailed_description": "Does nothing useful.",
+            "template_params": "",
         }
     )
 

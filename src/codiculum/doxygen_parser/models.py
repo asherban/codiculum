@@ -17,4 +17,5 @@ class CodeElement:
     brief_description: Optional[str] = None
     detailed_description: Optional[str] = None # Can store signatures, parameters, etc. here if needed
     location: Optional[CodeLocation] = None
+    template_params: Optional[str] = None # For C++ templates, e.g., "template <typename T>"
 
