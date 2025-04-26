@@ -34,7 +34,7 @@ def _get_detailed_description_text(element) -> Optional[str]:
 def parse_doxygen_xml_file(xml_file_path: str) -> List[CodeElement]:
     """
     Parses a Doxygen XML file and extracts information about code elements,
-    specifically focusing on function definitions initially.
+    including functions and classes.
 
     Args:
         xml_file_path: Path to the Doxygen XML file.
@@ -48,24 +48,18 @@ def parse_doxygen_xml_file(xml_file_path: str) -> List[CodeElement]:
         tree = etree.parse(xml_file_path)
         root = tree.getroot()
 
-        # Doxygen XML structure can vary, look for compounddef and memberdef
-        # This example focuses on memberdef within compounddef (like classes/files)
-        # We might need to adjust based on the specific XMLs (e.g., index.xml vs specific file xmls)
-
-        # Find all function definitions (can be expanded for classes, variables etc.)
-        # Searching globally in the file for memberdef kind=function
+        # Find all function definitions
         for memberdef in root.xpath('.//memberdef[@kind="function"]'):
             element_id = memberdef.get('id')
             kind = memberdef.get('kind')
             name = _get_text(memberdef, 'name')
 
             if not element_id or not kind or not name:
-                logger.warning(f"Skipping memberdef due to missing id, kind, or name in {xml_file_path}")
+                logger.warning(f"Skipping function memberdef due to missing id, kind, or name in {xml_file_path}")
                 continue
 
             brief_desc = _get_text(memberdef, 'briefdescription')
-            # detailed_desc = _get_text(memberdef, 'detaileddescription') # Simple text grab
-            detailed_desc = _get_detailed_description_text(memberdef) # More robust text grab
+            detailed_desc = _get_detailed_description_text(memberdef)
 
             location_element = memberdef.find('location')
             location = None
@@ -80,12 +74,54 @@ def parse_doxygen_xml_file(xml_file_path: str) -> List[CodeElement]:
                         end_line=int(bodyend) if bodyend and bodyend.isdigit() else None
                     )
                 except ValueError:
-                     logger.warning(f"Could not parse line numbers for {name} in {file_path}: line='{line}', bodyend='{bodyend}'")
+                     logger.warning(f"Could not parse line numbers for function {name} in {file_path}: line='{line}', bodyend='{bodyend}'")
 
+            element = CodeElement(
+                id=element_id,
+                name=name,
+                kind=kind,
+                brief_description=brief_desc,
+                detailed_description=detailed_desc,
+                location=location,
+            )
+            elements.append(element)
+            logger.debug(f"Extracted function element: {name} ({kind})")
 
-            # TODO: Extract signature/parameters more reliably if needed
-            # For now, detailed_description often contains it, or use 'argsstring'
-            # signature = _get_text(memberdef, 'argsstring') # Removed unused variable assignment
+        # Find all class definitions (often the main element in a class file)
+        # Using xpath './compounddef[@kind="class"]' to find direct children first
+        # If not found, try './/compounddef[@kind="class"]' for nested cases (though less common for top-level class files)
+        class_defs = root.xpath('./compounddef[@kind="class"]')
+        if not class_defs:
+             class_defs = root.xpath('.//compounddef[@kind="class"]') # Fallback
+
+        for classdef in class_defs:
+            element_id = classdef.get('id')
+            kind = classdef.get('kind')
+            # Class name is usually in 'compoundname' tag
+            name_element = classdef.find('compoundname')
+            name = name_element.text.strip() if name_element is not None and name_element.text else None
+
+            if not element_id or not kind or not name:
+                logger.warning(f"Skipping class compounddef due to missing id, kind, or name in {xml_file_path}")
+                continue
+
+            brief_desc = _get_text(classdef, 'briefdescription')
+            detailed_desc = _get_detailed_description_text(classdef)
+
+            # Location for classes might be less specific, often points to the header file
+            location_element = classdef.find('location')
+            location = None
+            if location_element is not None:
+                file_path = location_element.get('file')
+                line = location_element.get('line') # Class definition might not have bodyend
+                try:
+                    location = CodeLocation(
+                        file=file_path,
+                        start_line=int(line) if line and line.isdigit() else None,
+                        end_line=None # Classes might not have a simple body end line like functions
+                    )
+                except ValueError:
+                     logger.warning(f"Could not parse start line for class {name} in {file_path}: line='{line}'")
 
 
             element = CodeElement(
@@ -93,15 +129,11 @@ def parse_doxygen_xml_file(xml_file_path: str) -> List[CodeElement]:
                 name=name,
                 kind=kind,
                 brief_description=brief_desc,
-                # Combine signature and detailed description for now? Or store signature separately?
-                # Storing detailed description as-is for now.
                 detailed_description=detailed_desc,
                 location=location,
-                # Add signature attribute to CodeElement model if desired
-                # signature=signature
             )
             elements.append(element)
-            logger.debug(f"Extracted element: {name} ({kind})")
+            logger.debug(f"Extracted class element: {name} ({kind})")
 
     except etree.XMLSyntaxError as e:
         logger.error(f"Error parsing XML file {xml_file_path}: {e}")
@@ -110,7 +142,7 @@ def parse_doxygen_xml_file(xml_file_path: str) -> List[CodeElement]:
     except Exception as e:
         logger.error(f"An unexpected error occurred while parsing {xml_file_path}: {e}")
 
-    logger.info(f"Finished parsing {xml_file_path}. Found {len(elements)} function elements.")
+    logger.info(f"Finished parsing {xml_file_path}. Found {len(elements)} elements (functions/classes).")
     return elements
 
 # Example Usage (requires a sample Doxygen XML file)
@@ -150,7 +182,7 @@ if __name__ == '__main__':
     extracted_elements = parse_doxygen_xml_file(xml_path)
 
     if extracted_elements:
-        print(f"\nSuccessfully extracted {len(extracted_elements)} function elements from {xml_path}:")
+        print(f"\nSuccessfully extracted {len(extracted_elements)} elements (functions/classes) from {xml_path}:")
         # Print details of the first few elements as an example
         for i, element in enumerate(extracted_elements[:5]):
             print(f"--- Element {i+1} ---")
@@ -165,4 +197,4 @@ if __name__ == '__main__':
             else:
                 print("  Location: Not Available")
     else:
-        print(f"No function elements extracted from {xml_path}.") 
+        print(f"No elements (functions/classes) extracted from {xml_path}.") 
