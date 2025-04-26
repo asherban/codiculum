@@ -34,12 +34,14 @@ def format_element_to_chunk(element: CodeElement, source_snippet: str) -> Chunk:
     # Construct the text content exactly as defined in the unit test
     # Note: We assume 'python' for the code block language for simplicity here.
     # A more robust solution might inspect the file extension.
-    expected_text = f"""Brief: {element.brief_description}
+    expected_text = f"""File: {element.location.file}
+Brief: {element.brief_description}
 Detailed: {element.detailed_description}
 
 Code:
-```python
-{source_snippet}```"""
+```{element.language}
+{source_snippet}
+```"""
 
     # Populate metadata as expected by the unit test
     metadata = {

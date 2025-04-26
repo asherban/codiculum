@@ -13,6 +13,7 @@ class CodeElement:
     id: str # Doxygen ID
     name: str
     kind: str # e.g., 'function', 'class', 'struct', 'variable', 'enum', 'define', 'file', 'namespace'
+    language: str
     brief_description: Optional[str] = None
     detailed_description: Optional[str] = None # Can store signatures, parameters, etc. here if needed
     location: Optional[CodeLocation] = None

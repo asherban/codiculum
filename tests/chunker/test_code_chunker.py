@@ -10,6 +10,7 @@ def test_format_element_to_chunk():
         id="test_func_1",
         name="test_function",
         kind="function",
+        language="python",
         brief_description="A test function.",
         detailed_description="Does nothing useful.",
         location=CodeLocation(
@@ -21,12 +22,14 @@ def test_format_element_to_chunk():
     source_snippet = "def test_function():\n    print('Hello')\n"
 
     # Construct the expected text representation for the chunk
-    expected_text = f"""Brief: {element.brief_description}
+    expected_text = f"""File: src/example.py
+Brief: {element.brief_description}
 Detailed: {element.detailed_description}
 
 Code:
 ```python
-{source_snippet}```"""
+{source_snippet}
+```"""
 
     expected_chunk = Chunk(
         text=expected_text,
